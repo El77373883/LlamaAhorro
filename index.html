@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ahorro Pro">
+    <meta name="theme-color" content="#0A0E27">
+    <link rel="apple-touch-icon" href="icono/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <title>Ahorro Pro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <span class="back-button">←</span>
+                <h1 class="title">MIS METAS</h1>
+                <button class="edit-button">Editar</button>
+            </div>
+        </header>
+
+        <!-- Meta Principal -->
+        <main class="main-content">
+            <div class="goal-card highlight">
+                <div class="goal-icon">🏍️</div>
+                <div class="goal-info">
+                    <h2 class="goal-name">moto</h2>
+                    <p class="goal-amount">$360.00</p>
+                </div>
+                <div class="goal-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0.65%"></div>
+                    </div>
+                    <span class="progress-text">0.65%</span>
+                </div>
+            </div>
+
+            <!-- Banner Crypto -->
+            <div class="crypto-banner">
+                <p>bitso</p>
+                <span>Comprar cripto con tus pesos</span>
+                <button class="invest-button">Invertir ahora</button>
+            </div>
+
+            <!-- Detalles de Meta -->
+            <div class="goal-details">
+                <div class="detail-card">
+                    <p class="detail-label">AHORRO TOTAL</p>
+                    <h3 class="detail-value">$453.95</h3>
+                </div>
+                <div class="detail-card">
+                    <p class="detail-label">AHORRAR POR SEMANA</p>
+                    <h3 class="detail-value">$813.95</h3>
+                </div>
+                <div class="detail-card">
+                    <p class="detail-label">FECHA META</p>
+                    <h3 class="detail-value">31/12/27</h3>
+                </div>
+            </div>
+
+            <!-- Meta Total -->
+            <div class="goal-card total">
+                <div class="goal-info full">
+                    <h2 class="goal-name">MOTO</h2>
+                    <p class="goal-amount-display">$360.00</p>
+                    <p class="goal-total">META $70,000.00</p>
+                    <p class="goal-date">04/05/26</p>
+                </div>
+            </div>
+
+            <!-- Historial -->
+            <div class="history-section">
+                <h3 class="section-title">HISTORIAL</h3>
+                <div class="history-item">
+                    <div class="history-date">
+                        <span class="amount">$360.00</span>
+                        <span class="date">4 may 2026</span>
+                    </div>
+                    <p class="balance">$360.00 Balance</p>
+                </div>
+            </div>
+
+            <!-- Botón Nueva Meta -->
+            <button class="add-goal-button" onclick="showNewGoalForm()">+ NUEVA META</button>
+        </main>
+
+        <!-- Modal Nueva Meta -->
+        <div id="newGoalModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h2>NUEVA META</h2>
+                <div class="form-group">
+                    <label>Sé cuánto quiero ahorrar</label>
+                    <input type="number" id="goalAmount" placeholder="Ej: 70,000" class="input-field">
+                </div>
+                <div class="form-group">
+                    <label>Solo quiero comenzar a ahorrar</label>
+                    <input type="text" id="goalName" placeholder="Nombre de la meta" class="input-field">
+                </div>
+                <div class="form-group">
+                    <label>Fecha objetivo</label>
+                    <input type="date" id="goalDate" class="input-field">
+                </div>
+                <div class="modal-buttons">
+                    <button onclick="hideNewGoalForm()" class="cancel-button">Cancelar</button>
+                    <button onclick="createNewGoal()" class="save-button">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
