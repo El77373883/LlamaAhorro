@@ -15,7 +15,42 @@ async function init() {
     renderAll();
     setupEmojiPicker();
     setupServiceWorker();
+    createParticles();
+    createCoinsRain();
     updateStreak();
+}
+
+// Crear partículas de fondo
+function createParticles() {
+    const container = document.getElementById('particles');
+    const particleEmojis = ['💰', '💵', '💎', '✨', '🪙', '💲'];
+    
+    setInterval(() => {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.textContent = particleEmojis[Math.floor(Math.random() * particleEmojis.length)];
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 4 + 's';
+        container.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 8000);
+    }, 2000);
+}
+
+// Crear lluvia de monedas en el balance
+function createCoinsRain() {
+    const container = document.getElementById('coinsRain');
+    
+    setInterval(() => {
+        const coin = document.createElement('div');
+        coin.className = 'coin';
+        coin.textContent = '🪙';
+        coin.style.left = Math.random() * 100 + '%';
+        coin.style.animationDelay = Math.random() * 3 + 's';
+        container.appendChild(coin);
+        
+        setTimeout(() => coin.remove(), 6000);
+    }, 3000);
 }
 
 // Cargar datos
@@ -37,15 +72,19 @@ function setupServiceWorker() {
 // Actualizar total ahorrado
 async function updateTotalSavings() {
     const total = await db.getTotalSavings();
-    document.getElementById('totalSavings').textContent = `$${total.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    const element = document.getElementById('totalSavings');
+    element.textContent = `$${total.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 }
 
 // Cambiar tabs
 function switchTab(tab) {
     currentTab = tab;
     
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelector(`.tab:nth-child(${tab === 'goals' ? 1 : tab === 'history' ? 2 : 3})`).classList.add('active');
+    document.querySelectorAll('.tab-premium').forEach(t => t.classList.remove('active'));
+    const tabs = document.querySelectorAll('.tab-premium');
+    if (tab === 'goals') tabs[0].classList.add('active');
+    else if (tab === 'history') tabs[1].classList.add('active');
+    else tabs[2].classList.add('active');
     
     document.getElementById('goalsContainer').style.display = tab === 'goals' ? 'block' : 'none';
     document.getElementById('historyContainer').style.display = tab === 'history' ? 'block' : 'none';
@@ -75,11 +114,14 @@ function renderGoals() {
     
     if (goals.length === 0) {
         container.innerHTML = `
-            <div style="text-align:center; padding: 60px 20px;">
-                <div style="font-size: 80px; margin-bottom: 20px;">🎯</div>
-                <h3 style="margin-bottom: 12px;">No tienes metas aún</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 24px;">Crea tu primera meta de ahorro y comienza a ahorrar</p>
-                <button class="calculate-btn" onclick="openNewGoal()">✨ Crear mi primera meta</button>
+            <div class="empty-state">
+                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHh4eHh4eHh4eA/3o6Zt481isNVuQI1l6/giphy.gif" 
+                     class="empty-state-gif" 
+                     alt="Alcancía"
+                     onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22><rect fill=%22%23FFD700%22 width=%22120%22 height=%22120%22 rx=%2220%22/><text x=%2260%22 y=%2280%22 font-size=%2260%22 text-anchor=%22middle%22>🐷</text></svg>'">
+                <h3 class="empty-state-title">¡Sin metas aún!</h3>
+                <p class="empty-state-text">Crea tu primera meta y comienza a ahorrar como un PRO</p>
+                <button class="btn-calculate-premium" onclick="openNewGoal()">🚀 Crear Meta</button>
             </div>
         `;
         return;
@@ -87,63 +129,64 @@ function renderGoals() {
 
     container.innerHTML = goals.map(goal => {
         const progress = (goal.saved / goal.amount) * 100;
-        const circumference = 2 * Math.PI * 54;
+        const circumference = 2 * Math.PI * 55;
         const offset = circumference - (progress / 100) * circumference;
         const daysLeft = Math.ceil((new Date(goal.deadline) - new Date()) / (1000 * 60 * 60 * 24));
         const weeklyNeeded = calculateWeekly(goal);
         
         return `
-            <div class="goal-card-pro">
-                <div class="goal-header">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <span class="goal-icon-large">${goal.emoji}</span>
-                        <div>
-                            <div class="goal-title">${goal.name}</div>
-                            <div class="goal-target">Meta: $${goal.amount.toLocaleString()}</div>
-                        </div>
+            <div class="goal-ultra">
+                <div class="goal-ultra-header">
+                    <div class="goal-emoji-container">${goal.emoji}</div>
+                    <div>
+                        <div class="goal-name-pro">${goal.name}</div>
+                        <div class="goal-meta-pro">Meta: $${goal.amount.toLocaleString()}</div>
                     </div>
-                    <div style="text-align:right;">
-                        <span style="background: ${progress >= 100 ? '#10B981' : '#4A6CF7'}; padding:4px 12px; border-radius:20px; font-size:14px; font-weight:700;">
-                            ${progress.toFixed(1)}%
+                    <div style="margin-left:auto;">
+                        <span style="background: ${progress >= 100 ? 'rgba(0,255,136,0.2)' : 'rgba(255,215,0,0.2)'}; 
+                                     padding:6px 14px; 
+                                     border-radius:20px; 
+                                     font-size:14px; 
+                                     font-weight:800;
+                                     color: ${progress >= 100 ? '#00FF88' : '#FFD700'};">
+                            ${progress >= 100 ? '🎉' : ''} ${progress.toFixed(1)}%
                         </span>
                     </div>
                 </div>
                 
-                <div class="progress-circle-container">
-                    <svg class="circular-progress" viewBox="0 0 120 120">
-                        <circle class="circular-bg" cx="60" cy="60" r="54"></circle>
-                        <circle class="circular-fill" cx="60" cy="60" r="54"
+                <div class="progress-ring-container">
+                    <svg class="progress-ring" viewBox="0 0 120 120">
+                        <circle class="progress-ring-bg" cx="60" cy="60" r="55"/>
+                        <circle class="progress-ring-fill" cx="60" cy="60" r="55"
                             stroke-dasharray="${circumference}"
-                            stroke-dashoffset="${offset}"
-                            stroke="${progress >= 100 ? '#10B981' : '#4A6CF7'}">
-                        </circle>
-                        <text x="60" y="60" class="progress-text">${Math.round(progress)}%</text>
+                            stroke-dashoffset="${offset}"/>
                     </svg>
+                    <div class="progress-center-text">${Math.round(progress)}%</div>
                 </div>
                 
-                <div class="goal-stats">
-                    <div class="stat-item">
-                        <div class="stat-label">AHORRADO</div>
-                        <div class="stat-value">$${goal.saved.toLocaleString()}</div>
+                <div class="stats-grid-pro">
+                    <div class="stat-pro">
+                        <div class="stat-pro-label">💰 Ahorrado</div>
+                        <div class="stat-pro-value">$${goal.saved.toLocaleString()}</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-label">FALTANTE</div>
-                        <div class="stat-value">$${(goal.amount - goal.saved).toLocaleString()}</div>
+                    <div class="stat-pro">
+                        <div class="stat-pro-label">🎯 Restante</div>
+                        <div class="stat-pro-value">$${(goal.amount - goal.saved).toLocaleString()}</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-label">POR SEMANA</div>
-                        <div class="stat-value">$${weeklyNeeded.toLocaleString()}</div>
+                    <div class="stat-pro">
+                        <div class="stat-pro-label">📅 Por Semana</div>
+                        <div class="stat-pro-value">$${weeklyNeeded.toLocaleString()}</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-label">DÍAS RESTANTES</div>
-                        <div class="stat-value">${daysLeft > 0 ? daysLeft : '¡Completado!'}</div>
+                    <div class="stat-pro">
+                        <div class="stat-pro-label">⏰ Días</div>
+                        <div class="stat-pro-value">${daysLeft > 0 ? daysLeft : '✅'}</div>
                     </div>
                 </div>
                 
-                <div class="goal-actions">
-                    <button class="btn btn-add" onclick="addToGoal(${goal.id})">💰 Agregar</button>
-                    <button class="btn btn-withdraw" onclick="withdrawFromGoal(${goal.id})">💸 Retirar</button>
-                    <button class="btn btn-edit" onclick="editGoal(${goal.id})">✏️</button>
+                <div class="goal-actions-pro">
+                    <button class="btn-premium btn-save" onclick="addToGoal(${goal.id})">💰 Depositar</button>
+                    <button class="btn-premium btn-withdraw-premium" onclick="withdrawFromGoal(${goal.id})">💸 Retirar</button>
+                    <button class="btn-premium btn-edit-premium" onclick="editGoal(${goal.id})">✏️</button>
                 </div>
             </div>
         `;
@@ -166,10 +209,10 @@ async function renderHistory() {
     
     if (transactions.length === 0) {
         container.innerHTML = `
-            <div style="text-align:center; padding: 60px 20px;">
-                <div style="font-size:80px;">📊</div>
-                <h3>Sin movimientos</h3>
-                <p style="color: var(--text-secondary);">Tus transacciones aparecerán aquí</p>
+            <div class="empty-state">
+                <div class="empty-state-gif" style="font-size:100px;">📊</div>
+                <h3 class="empty-state-title">Sin movimientos</h3>
+                <p class="empty-state-text">Tus transacciones aparecerán aquí</p>
             </div>
         `;
         return;
@@ -179,15 +222,26 @@ async function renderHistory() {
     
     container.innerHTML = sortedTx.map(tx => {
         const goal = goals.find(g => g.id === tx.goalId);
+        const isDeposit = tx.type === 'add';
+        
         return `
-            <div class="history-item ${tx.type}">
-                <div>
-                    <div style="font-weight:600;">${tx.type === 'add' ? 'Depósito' : 'Retiro'}</div>
-                    <div class="history-date">${new Date(tx.date).toLocaleDateString('es-MX', {year: 'numeric', month: 'long', day: 'numeric'})}</div>
-                    <div style="font-size:12px; color: var(--text-secondary);">${goal ? goal.emoji + ' ' + goal.name : 'Sin meta'}</div>
+            <div class="history-item-premium">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <div class="history-icon-circle ${isDeposit ? 'deposit' : 'withdraw'}">
+                        ${isDeposit ? '💰' : '💸'}
+                    </div>
+                    <div>
+                        <div style="font-weight:700; font-size:16px;">${isDeposit ? 'Depósito' : 'Retiro'}</div>
+                        <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
+                            ${new Date(tx.date).toLocaleDateString('es-MX', {year:'numeric', month:'long', day:'numeric'})}
+                        </div>
+                        <div style="font-size:12px; color:var(--text-secondary);">
+                            ${goal ? goal.emoji + ' ' + goal.name : 'Sin meta'}
+                        </div>
+                    </div>
                 </div>
-                <div class="history-amount ${tx.type}">
-                    ${tx.type === 'add' ? '+' : '-'}$${tx.amount.toLocaleString()}
+                <div style="font-size:24px; font-weight:800; color: ${isDeposit ? '#00FF88' : '#FF4500'};">
+                    ${isDeposit ? '+' : '-'}$${tx.amount.toLocaleString()}
                 </div>
             </div>
         `;
@@ -200,20 +254,63 @@ function renderAchievements() {
     const completedGoals = goals.filter(g => g.saved >= g.amount).length;
     
     const achievements = [
-        { icon: '🌟', name: 'Primer depósito', unlocked: allTransactions.length > 0 },
-        { icon: '💎', name: '$1,000 ahorrados', unlocked: totalSaved >= 1000 },
-        { icon: '🏆', name: 'Primera meta completada', unlocked: completedGoals > 0 },
-        { icon: '🔥', name: 'Racha de 7 días', unlocked: true },
-        { icon: '👑', name: 'Ahorrador Pro', unlocked: totalSaved >= 10000 },
-        { icon: '🎯', name: '3 metas activas', unlocked: goals.length >= 3 }
+        { 
+            icon: '🌟', 
+            name: 'Primer Depósito', 
+            desc: 'Haz tu primer ahorro',
+            unlocked: allTransactions.length > 0,
+            gif: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHh4eHh4eHh4eA/3o6Zt481isNVuQI1l6/giphy.gif'
+        },
+        { 
+            icon: '💎', 
+            name: 'Milly', 
+            desc: 'Ahorra $1,000',
+            unlocked: totalSaved >= 1000,
+            gif: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHh4eHh4eHh4eA/3o6Zt481isNVuQI1l6/giphy.gif'
+        },
+        { 
+            icon: '🏆', 
+            name: 'Meta Cumplida', 
+            desc: 'Completa una meta',
+            unlocked: completedGoals > 0,
+            gif: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHh4eHh4eHh4eA/3o6Zt481isNVuQI1l6/giphy.gif'
+        },
+        { 
+            icon: '🔥', 
+            name: 'En Racha', 
+            desc: '7 días ahorrando',
+            unlocked: true,
+            gif: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHh4eHh4eHh4eA/xT9DPldJHzZKtORo3C/giphy.gif'
+        },
+        { 
+            icon: '👑', 
+            name: 'Ahorrador Pro', 
+            desc: 'Ahorra $10,000',
+            unlocked: totalSaved >= 10000,
+            gif: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHh4eHh4eHh4eA/3o6Zt481isNVuQI1l6/giphy.gif'
+        },
+        { 
+            icon: '🎯', 
+            name: 'Multimetas', 
+            desc: '3 metas activas',
+            unlocked: goals.length >= 3,
+            gif: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHh4eHh4eHh4eA/3o6Zt481isNVuQI1l6/giphy.gif'
+        }
     ];
     
     document.getElementById('achievementsContainer').innerHTML = achievements.map(a => `
-        <div class="achievement-card" style="opacity: ${a.unlocked ? 1 : 0.5};">
-            <div class="achievement-icon">${a.unlocked ? a.icon : '🔒'}</div>
-            <div class="achievement-name">${a.name}</div>
-            <div class="achievement-status ${a.unlocked ? 'unlocked' : 'locked'}">
-                ${a.unlocked ? 'Desbloqueado' : 'Bloqueado'}
+        <div class="achievement-premium ${a.unlocked ? 'unlocked' : ''}" style="opacity: ${a.unlocked ? 1 : 0.4};">
+            <img src="${a.unlocked ? a.gif : ''}" 
+                 class="achievement-gif" 
+                 alt="${a.name}"
+                 onerror="this.outerHTML='<div style=%22font-size:60px;%22>${a.unlocked ? a.icon : '🔒'}</div>'">
+            <div style="font-size: ${a.unlocked ? '24px' : '60px'}; min-height:60px;">
+                ${!a.unlocked ? '🔒' : ''}
+            </div>
+            <div style="font-weight:700; font-size:14px;">${a.name}</div>
+            <div style="font-size:11px; color:var(--text-secondary);">${a.desc}</div>
+            <div style="font-size:11px; margin-top:4px; color: ${a.unlocked ? '#FFD700' : '#666'};">
+                ${a.unlocked ? '✅ Desbloqueado' : '🔒 Bloqueado'}
             </div>
         </div>
     `).join('');
@@ -222,8 +319,16 @@ function renderAchievements() {
 // Configurar emoji picker
 function setupEmojiPicker() {
     const picker = document.getElementById('emojiPicker');
+    if (!picker) return;
+    
     picker.innerHTML = emojis.map(e => `
-        <div class="emoji-option ${e === selectedEmoji ? 'selected' : ''}" onclick="selectEmoji('${e}')">${e}</div>
+        <div onclick="selectEmoji('${e}')" 
+             style="width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; 
+                    font-size:28px; cursor:pointer; transition:all 0.3s;
+                    background: ${e === selectedEmoji ? 'rgba(255,215,0,0.2)' : 'rgba(255,255,255,0.03)'}; 
+                    border: 2px solid ${e === selectedEmoji ? '#FFD700' : 'var(--border-color)'};">
+            ${e}
+        </div>
     `).join('');
 }
 
@@ -257,14 +362,35 @@ function calculateSavings() {
 
     const resultDiv = document.getElementById('calculationResult');
     resultDiv.style.display = 'block';
+    resultDiv.style.background = 'rgba(255,215,0,0.05)';
+    resultDiv.style.border = '1px solid rgba(255,215,0,0.2)';
+    resultDiv.style.borderRadius = '16px';
+    resultDiv.style.padding = '16px';
+    resultDiv.style.marginTop = '16px';
     resultDiv.innerHTML = `
-        <h4 style="margin-bottom:12px;">📊 Plan de ahorro calculado</h4>
-        <div class="result-item"><span>🎯 Meta:</span><span>$${amount.toLocaleString()}</span></div>
-        <div class="result-item"><span>📅 Fecha límite:</span><span>${new Date(deadline).toLocaleDateString()}</span></div>
-        <div class="result-item"><span>⏰ Días restantes:</span><span>${daysLeft} días</span></div>
-        <div class="result-item"><span>💵 Por día:</span><span>$${daily.toLocaleString()}</span></div>
-        <div class="result-item"><span>📆 Por semana:</span><span>$${weekly.toLocaleString()}</span></div>
-        <div class="result-item"><span>📅 Por mes:</span><span>$${monthly.toLocaleString()}</span></div>
+        <div style="font-weight:800; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+            <span>📊</span> Plan de Ahorro
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <span style="color:var(--text-secondary);">🎯 Meta</span>
+            <span style="font-weight:700;">$${amount.toLocaleString()}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <span style="color:var(--text-secondary);">📅 Días</span>
+            <span style="font-weight:700;">${daysLeft} días</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <span style="color:var(--text-secondary);">☀️ Diario</span>
+            <span style="font-weight:700; color:#FFD700;">$${daily.toLocaleString()}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+            <span style="color:var(--text-secondary);">📆 Semanal</span>
+            <span style="font-weight:700; color:#FFD700;">$${weekly.toLocaleString()}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:8px 0;">
+            <span style="color:var(--text-secondary);">📅 Mensual</span>
+            <span style="font-weight:700; color:#FFD700;">$${monthly.toLocaleString()}</span>
+        </div>
     `;
 
     document.getElementById('calculateBtn').style.display = 'none';
@@ -287,7 +413,6 @@ async function saveGoal() {
     closeModal('newGoalModal');
     await loadData();
     renderAll();
-    launchConfetti();
     resetNewGoalForm();
 }
 
@@ -325,11 +450,9 @@ async function quickAdd() {
     await loadData();
     renderAll();
 
-    // Verificar si completó la meta
     const updatedGoal = await db.getGoal(goalId);
     if (updatedGoal.saved >= updatedGoal.amount) {
-        launchConfetti();
-        setTimeout(() => alert(`¡Felicidades! Completaste la meta: ${updatedGoal.name}`), 500);
+        setTimeout(() => alert(`🎉 ¡Felicidades! ¡Completaste: ${updatedGoal.name}!`), 500);
     }
 }
 
@@ -363,7 +486,7 @@ async function quickWithdraw() {
     renderAll();
 }
 
-// Funciones de modales
+// Modales
 function openNewGoal() {
     openModal('newGoalModal');
     setupEmojiPicker();
@@ -391,27 +514,8 @@ function closeModal(id) {
 
 // Streak
 function updateStreak() {
-    const streak = localStorage.getItem('streak') || 1;
-    document.getElementById('streakBadge').textContent = `🔥 ${streak} días`;
-    // Aquí puedes implementar lógica real de streak
-}
-
-// Confetti
-function launchConfetti() {
-    const container = document.getElementById('confettiContainer');
-    const colors = ['#4A6CF7', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
-    
-    for (let i = 0; i < 50; i++) {
-        const piece = document.createElement('div');
-        piece.className = 'confetti-piece';
-        piece.style.left = Math.random() * 100 + '%';
-        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        piece.style.animationDelay = Math.random() * 2 + 's';
-        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
-        container.appendChild(piece);
-        
-        setTimeout(() => piece.remove(), 4000);
-    }
+    const streak = localStorage.getItem('streak') || 15;
+    document.getElementById('streakNumber').textContent = streak;
 }
 
 // Iniciar
