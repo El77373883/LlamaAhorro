@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ahorro Pro">
+    <meta name="theme-color" content="#0A0E27">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <title>Ahorro Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0A0E27;
+            --bg-secondary: #131837;
+            --bg-card: #1B1F3B;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8B8DA3;
+            --accent-blue: #4A6CF7;
+            --accent-green: #10B981;
+            --accent-red: #EF4444;
+            --accent-orange: #F59E0B;
+            --accent-purple: #8B5CF6;
+            --border-color: #2D3154;
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0A0E27 0%, #131837 50%, #0A0E27 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: var(--safe-bottom);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        #app {
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Header Pro */
+        .header {
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 14, 39, 0.8);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .welcome-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .user-level {
+            font-size: 12px;
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
+
+        .streak-badge {
+            background: linear-gradient(135deg, #F59E0B, #EF4444);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #4A6CF7 0%, #8B5CF6 100%);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(74, 108, 247, 0.3);
+        }
+
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .quick-action {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-action:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .quick-action .emoji {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 4px;
+            margin: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .tab.active {
+            background: var(--accent-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.4);
+        }
+
+        /* Goals Cards */
+        .goals-container {
+            padding: 0 20px;
+        }
+
+        .goal-card-pro {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .goal-card-pro::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-blue);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .goal-icon-large {
+            font-size: 40px;
+        }
+
+        .goal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .goal-target {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .progress-circle-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .circular-progress {
+            width: 120px;
+            height: 120px;
+        }
+
+        .circular-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 8;
+        }
+
+        .circular-fill {
+            fill: none;
+            stroke: var(--accent-blue);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+            transform: rotate(-90deg);
+            transform-origin: center;
+        }
+
+        .progress-text {
+            font-size: 18px;
+            font-weight: 700;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            fill: var(--text-primary);
+        }
+
+        .goal-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .goal-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--accent-green), #059669);
+            color: white;
+        }
+
+        .btn-withdraw {
+            background: linear-gradient(135deg, var(--accent-red), #DC2626);
+            color: white;
+        }
+
+        .btn-edit {
+            background: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        /* Modal Pro */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-sheet {
+            background: var(--bg-card);
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            margin: 0 auto 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .currency-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            width: 100%;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .currency-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(74, 108, 247, 0.1);
+        }
+
+        .emoji-picker {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .emoji-option {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .emoji-option.selected {
+            border-color: var(--accent-blue);
+            background: rgba(74, 108, 247, 0.1);
+        }
+
+        .date-picker {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            width: 100%;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .calculate-btn {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .calculate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .calculation-result {
+            background: rgba(74, 108, 247, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 16px;
+            border: 1px solid rgba(74, 108, 247, 0.3);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        /* History */
+        .history-list {
+            padding: 20px;
+        }
+
+        .history-item {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item.add {
+            border-left-color: var(--accent-green);
+        }
+
+        .history-item.withdraw {
+            border-left-color: var(--accent-red);
+        }
+
+        .history-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .history-amount {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .history-amount.add {
+            color: var(--accent-green);
+        }
+
+        .history-amount.withdraw {
+            color: var(--accent-red);
+        }
+
+        /* Achievements */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .achievement-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .achievement-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .achievement-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .achievement-status {
+            font-size: 12px;
+        }
+
+        .achievement-status.locked {
+            color: var(--text-secondary);
+        }
+
+        .achievement-status.unlocked {
+            color: var(--accent-orange);
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100%) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .balance-amount {
+                font-size: 32px;
+            }
+            .goal-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top">
+                <div class="user-info">
+                    <div class="avatar">💰</div>
+                    <div>
+                        <div class="welcome-text">Bienvenido</div>
+                        <div class="user-level">Nivel Ahorrador Pro ⭐</div>
+                    </div>
+                </div>
+                <div class="streak-badge" id="streakBadge">🔥 15 días</div>
+            </div>
+            <div class="balance-card">
+                <div class="balance-label">AHORRO TOTAL</div>
+                <div class="balance-amount" id="totalSavings">$0.00</div>
+            </div>
+            <div class="quick-actions">
+                <button class="quick-action" onclick="openQuickAdd()">
+                    <span class="emoji">💵</span> Agregar
+                </button>
+                <button class="quick-action" onclick="openQuickWithdraw()">
+                    <span class="emoji">💸</span> Retirar
+                </button>
+                <button class="quick-action" onclick="openNewGoal()">
+                    <span class="emoji">🎯</span> Nueva Meta
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('goals')">Metas</button>
+            <button class="tab" onclick="switchTab('history')">Historial</button>
+            <button class="tab" onclick="switchTab('achievements')">Logros</button>
+        </div>
+
+        <!-- Goals Container -->
+        <div id="goalsContainer" class="goals-container"></div>
+
+        <!-- History Container -->
+        <div id="historyContainer" class="history-list" style="display:none;"></div>
+
+        <!-- Achievements Container -->
+        <div id="achievementsContainer" class="achievements-grid" style="display:none;"></div>
+
+        <!-- Quick Add Modal -->
+        <div class="modal-overlay" id="quickAddModal">
+            <div class="modal-sheet">
+                <div class="modal-handle"></div>
+                <h2 style="margin-bottom: 20px; font-size: 24px;">Agregar Ahorro</h2>
+                <div class="input-group">
+                    <label class="input-label">Cantidad</label>
+                    <input type="number" class="currency-input" id="quickAddAmount" placeholder="$0.00" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Para la meta</label>
+                    <select id="quickAddGoal" class="currency-input" style="font-size: 16px;"></select>
+                </div>
+                <button class="calculate-btn" onclick="quickAdd()">💾 Guardar Ahorro</button>
+                <button class="btn btn-edit" style="margin-top: 12px; width: 100%;" onclick="closeModal('quickAddModal')">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- Quick Withdraw Modal -->
+        <div class="modal-overlay" id="quickWithdrawModal">
+            <div class="modal-sheet">
+                <div class="modal-handle"></div>
+                <h2 style="margin-bottom: 20px; font-size: 24px;">Retirar Dinero</h2>
+                <div class="input-group">
+                    <label class="input-label">Cantidad a retirar</label>
+                    <input type="number" class="currency-input" id="quickWithdrawAmount" placeholder="$0.00" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">De la meta</label>
+                    <select id="quickWithdrawGoal" class="currency-input" style="font-size: 16px;"></select>
+                </div>
+                <button class="calculate-btn" style="background: linear-gradient(135deg, #EF4444, #DC2626);" onclick="quickWithdraw()">💸 Retirar</button>
+                <button class="btn btn-edit" style="margin-top: 12px; width: 100%;" onclick="closeModal('quickWithdrawModal')">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- New Goal Modal -->
+        <div class="modal-overlay" id="newGoalModal">
+            <div class="modal-sheet">
+                <div class="modal-handle"></div>
+                <h2 style="margin-bottom: 20px; font-size: 24px;">Nueva Meta de Ahorro</h2>
+                <div class="input-group">
+                    <label class="input-label">Nombre de la meta</label>
+                    <input type="text" class="currency-input" id="goalName" placeholder="Ej: Moto" style="font-size: 16px;">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Elige un ícono</label>
+                    <div class="emoji-picker" id="emojiPicker">
+                        <!-- Emojis se generan con JS -->
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Meta total</label>
+                    <input type="number" class="currency-input" id="goalAmount" placeholder="$0.00" id="goalAmountInput">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Fecha objetivo</label>
+                    <input type="date" class="date-picker" id="goalDate">
+                </div>
+                <div id="calculationResult" class="calculation-result" style="display:none;"></div>
+                <button class="calculate-btn" id="calculateBtn" onclick="calculateSavings()">🧮 Calcular plan de ahorro</button>
+                <button class="calculate-btn" id="saveGoalBtn" onclick="saveGoal()" style="display:none; margin-top: 12px;">✅ Crear Meta</button>
+                <button class="btn btn-edit" style="margin-top: 12px; width: 100%;" onclick="closeModal('newGoalModal')">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- Confetti Container -->
+        <div class="confetti-container" id="confettiContainer"></div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
