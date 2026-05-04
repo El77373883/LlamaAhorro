@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ahorro Pro">
+    <meta name="theme-color" content="#050510">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+    <title>Ahorro Pro 🔥</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --bg: #050510;
+            --bg2: #0A0A1F;
+            --card: #0F0F28;
+            --card2: #141430;
+            --gold: #FFD700;
+            --gold2: #FFA500;
+            --fire1: #FF4500;
+            --fire2: #FF6B00;
+            --fire3: #FFAA00;
+            --green: #00FF88;
+            --blue: #00D4FF;
+            --pink: #FF006E;
+            --border: rgba(255,215,0,0.12);
+            --text: #FFFFFF;
+            --muted: #6B6B9A;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: var(--safe-bottom);
+            overflow-x: hidden;
+        }
+
+        /* ========================
+           FONDO ANIMADO ESTRELLADO
+        ======================== */
+        .starfield {
+            position: fixed; inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--dur, 3s) ease-in-out infinite;
+            animation-delay: var(--delay, 0s);
+        }
+        @keyframes twinkle {
+            0%,100% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.4); }
+        }
+
+        /* ========================
+           LLUVIA DE MONEDAS
+        ======================== */
+        .coins-container {
+            position: fixed; inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .falling-coin {
+            position: absolute;
+            top: -60px;
+            font-size: 22px;
+            animation: coinFall var(--fall-dur, 4s) linear forwards;
+            opacity: 0;
+            filter: drop-shadow(0 0 6px rgba(255,215,0,0.7));
+        }
+        @keyframes coinFall {
+            0% { transform: translateY(0) rotate(0deg) scale(0.5); opacity: 0; }
+            10% { opacity: 1; transform: translateY(5vh) rotate(36deg) scale(1); }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(720deg) scale(0.8); opacity: 0; }
+        }
+
+        /* ========================
+           LLAMA CSS ANIMADA 🔥
+        ======================== */
+        .flame-scene {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin-bottom: 4px;
+        }
+        .flame-wrapper {
+            position: relative;
+            width: 56px;
+            height: 70px;
+        }
+        /* Llama base */
+        .flame {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 38px;
+            height: 52px;
+            border-radius: 50% 50% 20% 20% / 60% 60% 30% 30%;
+            background: linear-gradient(to top, #FF4500 0%, #FF6B00 30%, #FFAA00 65%, #FFD700 100%);
+            animation: flicker 0.5s ease-in-out infinite alternate;
+            filter: blur(0.5px);
+            transform-origin: bottom center;
+        }
+        .flame::before {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 34px;
+            border-radius: 50% 50% 20% 20% / 60% 60% 30% 30%;
+            background: linear-gradient(to top, #FF6B00 0%, #FFAA00 40%, #FFD700 80%, #FFF176 100%);
+            animation: flicker2 0.4s ease-in-out infinite alternate;
+        }
+        .flame::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 20px;
+            border-radius: 50% 50% 20% 20% / 60% 60% 30% 30%;
+            background: linear-gradient(to top, #FFF176, #FFFFFF);
+            animation: flicker3 0.3s ease-in-out infinite alternate;
+        }
+        /* Llama izquierda */
+        .flame-left {
+            position: absolute;
+            bottom: 0;
+            left: 4px;
+            width: 20px;
+            height: 34px;
+            border-radius: 50% 50% 20% 20% / 60% 60% 30% 30%;
+            background: linear-gradient(to top, #FF4500, #FFAA00);
+            animation: flickerL 0.6s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+            opacity: 0.7;
+        }
+        /* Llama derecha */
+        .flame-right {
+            position: absolute;
+            bottom: 0;
+            right: 4px;
+            width: 20px;
+            height: 30px;
+            border-radius: 50% 50% 20% 20% / 60% 60% 30% 30%;
+            background: linear-gradient(to top, #FF4500, #FF6B00);
+            animation: flickerR 0.55s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+            opacity: 0.65;
+        }
+        /* Brasas / base */
+        .flame-base {
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 14px;
+            background: radial-gradient(ellipse, rgba(255,69,0,0.6) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: glowPulse 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scaleX(1) scaleY(1) skewX(0deg); }
+            100% { transform: translateX(-50%) scaleX(0.92) scaleY(1.06) skewX(2deg); }
+        }
+        @keyframes flicker2 {
+            0% { transform: translateX(-50%) scaleX(1) scaleY(1); }
+            100% { transform: translateX(-50%) scaleX(0.88) scaleY(1.1) skewX(-2deg); }
+        }
+        @keyframes flicker3 {
+            0% { transform: translateX(-50%) scaleY(1); opacity: 0.9; }
+            100% { transform: translateX(-50%) scaleY(1.15); opacity: 0.6; }
+        }
+        @keyframes flickerL {
+            0% { transform: scaleX(1) scaleY(1) rotate(-5deg); }
+            100% { transform: scaleX(0.85) scaleY(0.92) rotate(5deg); }
+        }
+        @keyframes flickerR {
+            0% { transform: scaleX(1) scaleY(1) rotate(5deg); }
+            100% { transform: scaleX(0.8) scaleY(1.08) rotate(-5deg); }
+        }
+        @keyframes glowPulse {
+            0% { opacity: 0.5; transform: translateX(-50%) scaleX(1); }
+            100% { opacity: 1; transform: translateX(-50%) scaleX(1.2); }
+        }
+
+        /* Llama sobre la llama (emoji grande) */
+        .llama-emoji {
+            font-size: 44px;
+            filter: drop-shadow(0 0 16px rgba(255,165,0,0.6));
+            animation: llamaBounce 2s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
+        }
+        @keyframes llamaBounce {
+            0%,100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-6px) rotate(2deg); }
+        }
+
+        /* ========================
+           APP LAYOUT
+        ======================== */
+        #app {
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            padding-top: var(--safe-top);
+        }
+
+        /* ========================
+           HEADER
+        ======================== */
+        .header {
+            padding: 16px 20px 12px;
+            position: sticky;
+            top: 0;
+            background: rgba(5,5,16,0.92);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .app-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD700, #FF4500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .level-chip {
+            background: linear-gradient(135deg, var(--fire1), var(--fire2));
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 16px rgba(255,69,0,0.35);
+        }
+        .streak-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,69,0,0.12);
+            border: 1px solid rgba(255,69,0,0.3);
+            padding: 8px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        .streak-count {
+            font-family: 'Syne', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--fire1);
+            line-height: 1;
+        }
+        .streak-label {
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        /* ========================
+           BALANCE CARD
+        ======================== */
+        .balance-section {
+            padding: 20px;
+        }
+        .balance-card {
+            position: relative;
+            background: linear-gradient(135deg, #0F0F28 0%, #181840 100%);
+            border-radius: 28px;
+            padding: 28px 24px 24px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,215,0,0.08);
+        }
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -80px; left: 50%;
+            transform: translateX(-50%);
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(255,215,0,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .balance-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .balance-texts {}
+        .balance-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+        .balance-amount {
+            font-family: 'Syne', sans-serif;
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FFD700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+            line-height: 1;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .balance-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            background: rgba(0,255,136,0.12);
+            border: 1px solid rgba(0,255,136,0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--green);
+        }
+        /* Mini gráfica en balance card */
+        .mini-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 48px;
+        }
+        .mini-bar {
+            width: 8px;
+            border-radius: 4px 4px 0 0;
+            background: linear-gradient(to top, rgba(255,215,0,0.3), rgba(255,215,0,0.8));
+            animation: barGrow 1s ease-out forwards;
+            transform-origin: bottom;
+        }
+        @keyframes barGrow {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+
+        /* ========================
+           PROGRESS BAR TOTAL
+        ======================== */
+        .total-progress-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .progress-track {
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--fire1), var(--gold), var(--green));
+            background-size: 200% 100%;
+            animation: progressShimmer 2s linear infinite, progressGrow 1.5s ease-out;
+            transform-origin: left;
+        }
+        @keyframes progressShimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        @keyframes progressGrow {
+            from { transform: scaleX(0); }
+            to { transform: scaleX(1); }
+        }
+
+        /* ========================
+           QUICK ACTIONS
+        ======================== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 0 20px 20px;
+        }
+        .action-btn {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 16px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .action-btn:active {
+            transform: scale(0.94);
+            background: var(--card2);
+        }
+        .action-icon-big {
+            font-size: 28px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .action-label-sm {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.3px;
+        }
+
+        /* ========================
+           ANALYTICS SECTION
+        ======================== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px 12px;
+        }
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        .section-link {
+            font-size: 13px;
+            color: var(--gold);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Tarjetas de stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 20px 20px;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 18px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--accent-glow, rgba(255,215,0,0.05));
+        }
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent-color, var(--gold));
+            line-height: 1;
+        }
+        .stat-desc {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 6px;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        .trend-up {
+            background: rgba(0,255,136,0.12);
+            color: var(--green);
+        }
+        .trend-neutral {
+            background: rgba(255,215,0,0.12);
+            color: var(--gold);
+        }
+
+        /* Gráfica de barras animada */
+        .chart-card {
+            margin: 0 20px 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+        }
+        .chart-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 80px;
+        }
+        .bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            height: 100%;
+            justify-content: flex-end;
+        }
+        .bar-fill {
+            width: 100%;
+            border-radius: 6px 6px 0 0;
+            animation: barUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: var(--delay, 0s);
+            transform: scaleY(0);
+            transform-origin: bottom;
+        }
+        @keyframes barUp {
+            to { transform: scaleY(1); }
+        }
+        .bar-lbl {
+            font-size: 9px;
+            color: var(--muted);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* ========================
+           TABS
+        ======================== */
+        .tabs {
+            display: flex;
+            padding: 0 20px;
+            gap: 8px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab {
+            white-space: nowrap;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            background: var(--card);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.25s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,165,0,0.1));
+            border-color: rgba(255,215,0,0.3);
+            color: var(--gold);
+            box-shadow: 0 0 20px rgba(255,215,0,0.1);
+        }
+
+        /* ========================
+           GOAL CARDS
+        ======================== */
+        .goals-list {
+            padding: 0 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .goal-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px;
+            animation: cardSlideIn 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .goal-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.03) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .goal-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .goal-emoji-wrap {
+            width: 52px; height: 52px;
+            background: rgba(255,215,0,0.08);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+        .goal-info { flex: 1; }
+        .goal-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 3px;
+        }
+        .goal-target {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+        .goal-pct-badge {
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        /* Ring progress */
+        .goal-body {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .ring-wrap {
+            position: relative;
+            width: 90px; height: 90px;
+            flex-shrink: 0;
+        }
+        .ring-wrap svg {
+            width: 90px; height: 90px;
+            transform: rotate(-90deg);
+        }
+        .ring-track {
+            fill: none;
+            stroke: rgba(255,255,255,0.06);
+            stroke-width: 7;
+        }
+        .ring-fill {
+            fill: none;
+            stroke-width: 7;
+            stroke-linecap: round;
+            stroke: url(#ringGrad);
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ring-center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .ring-pct {
+            font-family: 'Syne', sans-serif;
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--gold);
+            line-height: 1;
+        }
+        .ring-sub {
+            font-size: 9px;
+            color: var(--muted);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Mini stats */
+        .goal-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            flex: 1;
+        }
+        .gstat {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 10px;
+        }
+        .gstat-label {
+            font-size: 10px;
+            color: var(--muted);
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            margin-bottom: 3px;
+        }
+        .gstat-val {
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        /* Progress bar en goal card */
+        .goal-progress-track {
+            height: 5px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        .goal-progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--fire1), var(--gold));
+            transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Actions */
+        .goal-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-dep {
+            flex: 1;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #000;
+            border: none;
+            border-radius: 14px;
+            padding: 13px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-dep:active { transform: scale(0.96); }
+        .btn-ret {
+            flex: 1;
+            background: rgba(255,69,0,0.12);
+            border: 1px solid rgba(255,69,0,0.3);
+            color: var(--fire1);
+            border-radius: 14px;
+            padding: 13px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-ret:active { transform: scale(0.96); }
+        .btn-edit {
+            width: 46px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--muted);
+            border-radius: 14px;
+            padding: 13px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* ========================
+           HISTORIAL
+        ======================== */
+        .history-list { padding: 0 20px 20px; }
+        .tx-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            animation: cardSlideIn 0.3s ease-out;
+        }
+        .tx-icon {
+            width: 44px; height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .tx-icon.add { background: rgba(0,255,136,0.1); }
+        .tx-icon.withdraw { background: rgba(255,69,0,0.1); }
+        .tx-info { flex: 1; }
+        .tx-name { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+        .tx-date { font-size: 12px; color: var(--muted); }
+        .tx-amount {
+            font-family: 'Syne', sans-serif;
+            font-size: 17px;
+            font-weight: 800;
+        }
+        .tx-amount.add { color: var(--green); }
+        .tx-amount.withdraw { color: var(--fire1); }
+
+        /* ========================
+           EMPTY STATE
+        ======================== */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .empty-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .empty-text {
+            color: var(--muted);
+            font-size: 15px;
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        /* ========================
+           LOGROS / ACHIEVEMENTS
+        ======================== */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 20px 20px;
+        }
+        .achievement-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 18px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .achievement-card.locked {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+        .achievement-icon { font-size: 36px; margin-bottom: 8px; display: block; }
+        .achievement-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .achievement-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+        .achievement-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #000;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 20px;
+        }
+
+        /* ========================
+           FAB BUTTON
+        ======================== */
+        .fab {
+            position: fixed;
+            bottom: calc(28px + var(--safe-bottom));
+            right: 24px;
+            width: 60px; height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            border: none;
+            color: #000;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 8px 32px rgba(255,215,0,0.4), 0 0 0 0 rgba(255,215,0,0.4);
+            z-index: 50;
+            transition: all 0.2s;
+            animation: fabPulse 3s ease-in-out infinite;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .fab:active { transform: scale(0.92); }
+        @keyframes fabPulse {
+            0%,100% { box-shadow: 0 8px 32px rgba(255,215,0,0.4), 0 0 0 0 rgba(255,215,0,0); }
+            50% { box-shadow: 0 8px 32px rgba(255,215,0,0.4), 0 0 0 12px rgba(255,215,0,0); }
+        }
+
+        /* ========================
+           MODALES
+        ======================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            display: flex;
+            align-items: flex-end;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-sheet {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--card2);
+            border-radius: 28px 28px 0 0;
+            border-top: 1px solid var(--border);
+            padding: 28px 24px calc(28px + var(--safe-bottom));
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-overlay.active .modal-sheet {
+            transform: translateY(0);
+        }
+        .modal-handle {
+            width: 40px; height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin: 0 auto 24px;
+        }
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+        .field-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .input-field {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 16px 18px;
+            color: #fff;
+            font-size: 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 20px;
+            -webkit-appearance: none;
+        }
+        .input-field:focus {
+            border-color: rgba(255,215,0,0.4);
+        }
+        select.input-field {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            border: none;
+            border-radius: 18px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #000;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            font-family: 'Syne', sans-serif;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-secondary {
+            width: 100%;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, var(--fire1), var(--fire2));
+            color: #fff;
+        }
+
+        /* Emoji picker */
+        .emoji-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .emoji-opt {
+            width: 50px; height: 50px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .emoji-opt.selected {
+            border-color: var(--gold);
+            background: rgba(255,215,0,0.12);
+        }
+
+        /* Plan result */
+        .plan-result {
+            background: rgba(255,215,0,0.05);
+            border: 1px solid rgba(255,215,0,0.15);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .plan-result.visible { display: block; }
+        .plan-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .plan-row:last-child { border-bottom: none; }
+        .plan-key { font-size: 13px; color: var(--muted); font-weight: 600; }
+        .plan-val { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; color: var(--gold); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: calc(100px + var(--safe-bottom));
+            left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 14px 24px;
+            font-weight: 700;
+            font-size: 15px;
+            z-index: 300;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            white-space: nowrap;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ========================
+           CONFETTI / CELEBRATION
+        ======================== */
+        .confetti-piece {
+            position: fixed;
+            width: 10px; height: 10px;
+            border-radius: 2px;
+            pointer-events: none;
+            z-index: 999;
+            animation: confettiFall var(--dur, 3s) ease-in forwards;
+            animation-delay: var(--delay, 0s);
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        ::-webkit-scrollbar { width: 0; background: transparent; }
+
+        /* Animated number */
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SVG defs -->
+<svg style="position:absolute;width:0;height:0;" aria-hidden="true">
+  <defs>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF4500"/>
+      <stop offset="50%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#00FF88"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- Fondo estrellado -->
+<div class="starfield" id="starfield"></div>
+
+<!-- Lluvia de monedas -->
+<div class="coins-container" id="coinsContainer"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-row">
+      <div class="header-left">
+        <div class="flame-scene">
+          <div class="llama-emoji">🦙</div>
+        </div>
+        <div>
+          <div class="app-title">Ahorro Pro</div>
+          <div class="level-badge">🔥 Nivel Llama Pro</div>
+        </div>
+      </div>
+      <div class="streak-badge" onclick="showToast('🔥 ¡Racha activa! Sigue así')">
+        <div class="flame-wrapper" style="width:28px;height:36px;margin-right:2px;">
+          <div class="flame" style="width:20px;height:28px;"></div>
+          <div class="flame-left" style="width:10px;height:18px;left:2px;"></div>
+          <div class="flame-right" style="width:10px;height:16px;right:2px;"></div>
+          <div class="flame-base"></div>
+        </div>
+        <div>
+          <div class="streak-count" id="streakNumber">15</div>
+          <div class="streak-label">días</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BALANCE CARD -->
+  <div class="balance-section">
+    <div class="balance-card">
+      <div class="balance-inner">
+        <div class="balance-texts">
+          <div class="balance-label">Ahorro Total</div>
+          <div class="balance-amount" id="totalSavings">$0.00</div>
+          <div class="balance-change" id="balanceChange">
+            <span>↑</span> <span>+0%</span> este mes
+          </div>
+        </div>
+        <!-- Llama animada CSS pura -->
+        <div class="flame-scene">
+          <div class="llama-emoji" style="font-size:52px;">🦙</div>
+          <div class="flame-wrapper">
+            <div class="flame-left"></div>
+            <div class="flame-right"></div>
+            <div class="flame"></div>
+            <div class="flame-base"></div>
+          </div>
+        </div>
+      </div>
+      <div class="total-progress-section">
+        <div class="progress-labels">
+          <span style="color:var(--muted);font-size:12px;font-weight:700;">Progreso global</span>
+          <span style="color:var(--gold);font-size:12px;font-weight:800;" id="globalPct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="globalProgressFill" style="width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="quick-actions">
+    <div class="action-btn" onclick="openQuickAdd()">
+      <span class="action-icon-big">💰</span>
+      <div class="action-label-sm">Depositar</div>
+    </div>
+    <div class="action-btn" onclick="openQuickWithdraw()">
+      <span class="action-icon-big">💸</span>
+      <div class="action-label-sm">Retirar</div>
+    </div>
+    <div class="action-btn" onclick="openNewGoal()">
+      <span class="action-icon-big">🎯</span>
+      <div class="action-label-sm">Nueva Meta</div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="section-header">
+    <div class="section-title">📊 Analytics</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card" style="--accent-glow:rgba(255,215,0,0.07);">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-value" id="statMetas" style="--accent-color:var(--gold)">0</div>
+      <div class="stat-desc">Metas activas</div>
+      <div class="stat-trend trend-neutral">● En progreso</div>
+    </div>
+    <div class="stat-card" style="--accent-glow:rgba(0,255,136,0.07);">
+      <div class="stat-icon">✅</div>
+      <div class="stat-value" id="statCompleted" style="--accent-color:var(--green)">0</div>
+      <div class="stat-desc">Completadas</div>
+      <div class="stat-trend trend-up">↑ ¡Buen ritmo!</div>
+    </div>
+    <div class="stat-card" style="--accent-glow:rgba(0,212,255,0.07);">
+      <div class="stat-icon">💸</div>
+      <div class="stat-value" id="statTx" style="--accent-color:var(--blue)">0</div>
+      <div class="stat-desc">Transacciones</div>
+      <div class="stat-trend trend-neutral">● Total</div>
+    </div>
+    <div class="stat-card" style="--accent-glow:rgba(255,69,0,0.07);">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-value" id="statStreak" style="--accent-color:var(--fire1)">15</div>
+      <div class="stat-desc">Días de racha</div>
+      <div class="stat-trend trend-up">↑ Activo</div>
+    </div>
+  </div>
+
+  <!-- CHART -->
+  <div class="chart-card">
+    <div class="chart-title">Ahorro por mes (simulado)</div>
+    <div class="bar-chart" id="barChart"></div>
+    <div style="display:flex;gap:6px;margin-top:10px;" id="barLabels"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('goals',this)">🎯 Metas</div>
+    <div class="tab" onclick="switchTab('history',this)">📋 Historial</div>
+    <div class="tab" onclick="switchTab('achievements',this)">🏆 Logros</div>
+  </div>
+
+  <!-- CONTENEDORES -->
+  <div id="goalsView"><div class="goals-list" id="goalsList"></div></div>
+  <div id="historyView" style="display:none;"><div class="history-list" id="historyList"></div></div>
+  <div id="achievementsView" style="display:none;"><div class="achievements-grid" id="achievementsList"></div></div>
+
+</div><!-- /app -->
+
+<!-- FAB -->
+<button class="fab" onclick="openNewGoal()">+</button>
+
+<!-- ======================== MODALES ======================== -->
+
+<!-- Nueva Meta -->
+<div class="modal-overlay" id="newGoalModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎯 Nueva Meta</div>
+    <label class="field-label">Nombre del objetivo</label>
+    <input type="text" class="input-field" id="goalName" placeholder="Ej: Moto Ducati">
+    <label class="field-label">Ícono</label>
+    <div class="emoji-grid" id="emojiPicker"></div>
+    <label class="field-label">Meta total ($)</label>
+    <input type="number" class="input-field" id="goalAmount" placeholder="$0.00">
+    <label class="field-label">Fecha objetivo</label>
+    <input type="date" class="input-field" id="goalDate">
+    <div class="plan-result" id="planResult"></div>
+    <button class="btn-primary" id="calcBtn" onclick="calculateSavings()">🧮 Calcular Plan de Ahorro</button>
+    <button class="btn-primary" id="saveBtn" style="display:none;" onclick="saveGoal()">✅ Crear Meta</button>
+    <button class="btn-secondary" onclick="closeModal('newGoalModal')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Depositar -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💰 Depositar</div>
+    <label class="field-label">Cantidad</label>
+    <input type="number" class="input-field" id="addAmount" placeholder="$0.00">
+    <label class="field-label">Meta</label>
+    <select class="input-field" id="addGoalSelect"></select>
+    <button class="btn-primary" onclick="confirmAdd()">💾 Guardar Depósito</button>
+    <button class="btn-secondary" onclick="closeModal('addModal')">Cancelar</button>
+  </div>
+</div>
+
+<!-- Retirar -->
+<div class="modal-overlay" id="withdrawModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">💸 Retirar</div>
+    <label class="field-label">Cantidad a retirar</label>
+    <input type="number" class="input-field" id="withdrawAmount" placeholder="$0.00">
+    <label class="field-label">De la meta</label>
+    <select class="input-field" id="withdrawGoalSelect"></select>
+    <button class="btn-primary btn-danger" onclick="confirmWithdraw()">💸 Confirmar Retiro</button>
+    <button class="btn-secondary" onclick="closeModal('withdrawModal')">Cancelar</button>
+  </div>
+</div>
+
+<script>
+// ============================
+// DB (IndexedDB wrapper)
+// ============================
+class AhorroDB {
+    constructor() { this.db = null; }
+    async init() {
+        return new Promise((res, rej) => {
+            const req = indexedDB.open('AhorroProDB', 1);
+            req.onupgradeneeded = e => {
+                const d = e.target.result;
+                if (!d.objectStoreNames.contains('goals')) {
+                    const gs = d.createObjectStore('goals', { keyPath:'id', autoIncrement:true });
+                    gs.createIndex('name','name',{unique:false});
+                }
+                if (!d.objectStoreNames.contains('transactions')) {
+                    const ts = d.createObjectStore('transactions', { keyPath:'id', autoIncrement:true });
+                    ts.createIndex('goalId','goalId',{unique:false});
+                    ts.createIndex('type','type',{unique:false});
+                }
+            };
+            req.onsuccess = e => { this.db = e.target.result; res(); };
+            req.onerror = e => rej(e.target.error);
+        });
+    }
+    _tx(store, mode, fn) {
+        return new Promise((res, rej) => {
+            const tx = this.db.transaction(store, mode);
+            const s = tx.objectStore(store);
+            const req = fn(s);
+            req.onsuccess = () => res(req.result);
+            req.onerror = () => rej(req.error);
+        });
+    }
+    addGoal(g) { return this._tx('goals','readwrite', s => s.add({...g,saved:0,createdAt:new Date().toISOString(),completed:false})); }
+    getGoals() { return this._tx('goals','readonly', s => s.getAll()); }
+    getGoal(id) { return this._tx('goals','readonly', s => s.get(id)); }
+    async updateGoal(id, upd) {
+        return new Promise((res, rej) => {
+            const tx = this.db.transaction('goals','readwrite');
+            const s = tx.objectStore('goals');
+            const r = s.get(id);
+            r.onsuccess = () => {
+                Object.assign(r.result, upd);
+                const p = s.put(r.result);
+                p.onsuccess = res; p.onerror = () => rej(p.error);
+            };
+            r.onerror = () => rej(r.error);
+        });
+    }
+    addTransaction(t) { return this._tx('transactions','readwrite', s => s.add({...t,date:new Date().toISOString()})); }
+    getTransactions(goalId=null) {
+        if (goalId) return new Promise((res,rej) => {
+            const tx = this.db.transaction('transactions','readonly');
+            const idx = tx.objectStore('transactions').index('goalId');
+            const r = idx.getAll(goalId);
+            r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+        });
+        return this._tx('transactions','readonly', s => s.getAll());
+    }
+    async getTotalSavings() {
+        const gs = await this.getGoals();
+        return gs.reduce((t,g) => t + (g.saved||0), 0);
+    }
+}
+
+const db = new AhorroDB();
+let goals = [], allTx = [], currentTab = 'goals', selectedEmoji = '🏍️', calcPlan = null;
+const EMOJIS = ['🏍️','🚗','🏠','✈️','🎓','💻','📱','🎮','🎸','💍','🏖️','📚','🐶','🎨','🏋️','💼'];
+const MONTHS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+// ============================
+// INIT
+// ============================
+async function init() {
+    await db.init();
+    await loadData();
+    renderAll();
+    buildStarfield();
+    startCoinRain();
+    buildChart();
+    buildAchievements();
+    setupEmojiPicker();
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(()=>{});
+    }
+}
+
+async function loadData() {
+    goals = await db.getGoals();
+    allTx = await db.getTransactions();
+    await updateStats();
+}
+
+async function updateStats() {
+    const total = await db.getTotalSavings();
+    const totalTarget = goals.reduce((t,g) => t + (g.amount||0), 0);
+    const pct = totalTarget > 0 ? Math.min(100, (total/totalTarget)*100) : 0;
+    const completed = goals.filter(g => g.saved >= g.amount).length;
+    const streak = parseInt(localStorage.getItem('streak')||'15');
+
+    animateNumber('totalSavings', total, true);
+    document.getElementById('globalPct').textContent = pct.toFixed(1)+'%';
+    document.getElementById('globalProgressFill').style.width = pct+'%';
+    document.getElementById('statMetas').textContent = goals.filter(g => !g.completed && g.saved < g.amount).length;
+    document.getElementById('statCompleted').textContent = completed;
+    document.getElementById('statTx').textContent = allTx.length;
+    document.getElementById('statStreak').textContent = streak;
+    document.getElementById('streakNumber').textContent = streak;
+}
+
+function animateNumber(id, target, isCurrency=false) {
+    const el = document.getElementById(id);
+    const start = 0, dur = 1000, startT = performance.now();
+    function step(now) {
+        const p = Math.min((now-startT)/dur, 1);
+        const ease = 1 - Math.pow(1-p, 4);
+        const val = start + (target-start)*ease;
+        el.textContent = isCurrency ? `$${val.toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2})}` : Math.round(val);
+        if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+}
+
+// ============================
+// STARFIELD
+// ============================
+function buildStarfield() {
+    const sf = document.getElementById('starfield');
+    for (let i = 0; i < 80; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const size = Math.random()*2.5+0.5;
+        s.style.cssText = `width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--dur:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;
+        sf.appendChild(s);
+    }
+}
+
+// ============================
+// COIN RAIN
+// ============================
+function startCoinRain() {
+    const coins = ['🪙','💰','💵','💎','✨'];
+    const c = document.getElementById('coinsContainer');
+    setInterval(() => {
+        const coin = document.createElement('div');
+        coin.className = 'falling-coin';
+        coin.textContent = coins[Math.floor(Math.random()*coins.length)];
+        coin.style.cssText = `left:${Math.random()*100}%;--fall-dur:${3+Math.random()*4}s;animation-delay:${Math.random()*2}s`;
+        c.appendChild(coin);
+        setTimeout(() => coin.remove(), 8000);
+    }, 1800);
+}
+
+// ============================
+// CHART
+// ============================
+function buildChart() {
+    const chart = document.getElementById('barChart');
+    const labels = document.getElementById('barLabels');
+    const now = new Date();
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+        months.push({ label: MONTHS[d.getMonth()], value: Math.random()*800+100 });
+    }
+    const max = Math.max(...months.map(m=>m.value));
+    months.forEach((m,i) => {
+        const col = document.createElement('div');
+        col.className = 'bar-col';
+        const bar = document.createElement('div');
+        bar.className = 'bar-fill';
+        const h = (m.value/max)*100;
+        const colors = ['rgba(255,69,0,0.7)','rgba(255,107,0,0.7)','rgba(255,170,0,0.7)','rgba(255,215,0,0.8)','rgba(255,215,0,0.9)','rgba(0,255,136,0.9)'];
+        bar.style.cssText = `height:${h}%;background:${colors[i]};--delay:${i*0.1}s`;
+        col.appendChild(bar);
+        chart.appendChild(col);
+
+        const lbl = document.createElement('div');
+        lbl.className = 'bar-lbl';
+        lbl.textContent = m.label;
+        lbl.style.flex = '1';
+        labels.appendChild(lbl);
+    });
+}
+
+// ============================
+// RENDER GOALS
+// ============================
+function renderGoals() {
+    const list = document.getElementById('goalsList');
+    if (goals.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <div style="font-size:72px;margin-bottom:16px;">🦙</div>
+                <div class="empty-title">¡Sin metas aún!</div>
+                <p class="empty-text">Crea tu primera meta y comienza a ahorrar como una llama PRO 🔥</p>
+                <button class="btn-primary" style="max-width:240px;margin:0 auto;" onclick="openNewGoal()">🚀 Crear Meta</button>
+            </div>`;
+        return;
+    }
+    list.innerHTML = goals.map(goal => {
+        const prog = Math.min(100, (goal.saved / goal.amount) * 100);
+        const circum = 2*Math.PI*38;
+        const offset = circum - (prog/100)*circum;
+        const daysLeft = Math.ceil((new Date(goal.deadline)-new Date())/(86400000));
+        const weeksLeft = Math.max(1, Math.ceil(daysLeft/7));
+        const weeklyNeed = Math.ceil((goal.amount-goal.saved)/weeksLeft);
+        const isComplete = goal.saved >= goal.amount;
+        const badgeColor = isComplete ? 'background:rgba(0,255,136,0.15);color:#00FF88;' : 'background:rgba(255,215,0,0.12);color:#FFD700;';
+
+        return `
+        <div class="goal-card">
+          <div class="goal-top">
+            <div class="goal-emoji-wrap">${goal.emoji}</div>
+            <div class="goal-info">
+              <div class="goal-name">${goal.name}</div>
+              <div class="goal-target">Meta: $${goal.amount.toLocaleString('es-MX',{minimumFractionDigits:2})}</div>
+            </div>
+            <div class="goal-pct-badge" style="${badgeColor}">
+              ${isComplete?'🎉':''} ${prog.toFixed(1)}%
+            </div>
+          </div>
+          <div class="goal-body">
+            <div class="ring-wrap">
+              <svg viewBox="0 0 80 80">
+                <circle class="ring-track" cx="40" cy="40" r="38"/>
+                <circle class="ring-fill" cx="40" cy="40" r="38"
+                  stroke-dasharray="${circum.toFixed(2)}"
+                  stroke-dashoffset="${offset.toFixed(2)}"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-pct">${Math.round(prog)}%</div>
+                <div class="ring-sub">META</div>
+              </div>
+            </div>
+            <div class="goal-stats">
+              <div class="gstat">
+                <div class="gstat-label">💰 Ahorrado</div>
+                <div class="gstat-val">$${goal.saved.toLocaleString('es-MX',{minimumFractionDigits:0})}</div>
+              </div>
+              <div class="gstat">
+                <div class="gstat-label">🎯 Falta</div>
+                <div class="gstat-val">$${(goal.amount-goal.saved).toLocaleString('es-MX',{minimumFractionDigits:0})}</div>
+              </div>
+              <div class="gstat">
+                <div class="gstat-label">📅 /Semana</div>
+                <div class="gstat-val">${isComplete?'✅':'$'+weeklyNeed.toLocaleString()}</div>
+              </div>
+              <div class="gstat">
+                <div class="gstat-label">⏰ Días</div>
+                <div class="gstat-val">${daysLeft>0?daysLeft:'✅'}</div>
+              </div>
+            </div>
+          </div>
+          <div class="goal-progress-track">
+            <div class="goal-progress-fill" style="width:${prog}%;"></div>
+          </div>
+          <div class="goal-actions">
+            <button class="btn-dep" onclick="openAddForGoal(${goal.id})">💰 Depositar</button>
+            <button class="btn-ret" onclick="openWithdrawForGoal(${goal.id})">💸 Retirar</button>
+            <button class="btn-edit" onclick="showToast('✏️ Editar próximamente')">✏️</button>
+          </div>
+        </div>`;
+    }).join('');
+}
+
+// ============================
+// RENDER HISTORY
+// ============================
+async function renderHistory() {
+    const list = document.getElementById('historyList');
+    const tx = await db.getTransactions();
+    if (tx.length === 0) {
+        list.innerHTML = `<div class="empty-state">
+            <div style="font-size:60px;margin-bottom:16px;">📋</div>
+            <div class="empty-title">Sin movimientos</div>
+            <p class="empty-text">Aquí verás tus depósitos y retiros</p>
+        </div>`;
+        return;
+    }
+    const sorted = [...tx].sort((a,b) => new Date(b.date)-new Date(a.date));
+    const goalMap = {};
+    goals.forEach(g => goalMap[g.id] = g);
+    list.innerHTML = sorted.map(t => {
+        const g = goalMap[t.goalId];
+        const d = new Date(t.date);
+        return `
+        <div class="tx-item">
+          <div class="tx-icon ${t.type}">${t.type==='add'?'💰':'💸'}</div>
+          <div class="tx-info">
+            <div class="tx-name">${g?g.name:'Meta eliminada'}</div>
+            <div class="tx-date">${d.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'})}</div>
+          </div>
+          <div class="tx-amount ${t.type}">${t.type==='add'?'+':'-'}$${t.amount.toLocaleString('es-MX',{minimumFractionDigits:2})}</div>
+        </div>`;
+    }).join('');
+}
+
+// ============================
+// ACHIEVEMENTS
+// ============================
+function buildAchievements() {
+    const achs = [
+        {icon:'🌟',name:'Primera Meta',desc:'Creaste tu primera meta de ahorro',unlocked:goals.length>0},
+        {icon:'💰',name:'100 Ahorrado',desc:'Alcanzaste $100 en ahorros',unlocked:goals.reduce((t,g)=>t+g.saved,0)>=100},
+        {icon:'🔥',name:'Racha 7 días',desc:'7 días consecutivos ahorrando',unlocked:true},
+        {icon:'🏆',name:'Meta Cumplida',desc:'Completaste una meta al 100%',unlocked:goals.some(g=>g.saved>=g.amount)},
+        {icon:'🦙',name:'Nivel Llama',desc:'Eres un maestro del ahorro',unlocked:goals.length>=3},
+        {icon:'💎',name:'Inversión Pro',desc:'$1000 ahorrados en total',unlocked:goals.reduce((t,g)=>t+g.saved,0)>=1000},
+        {icon:'🚀',name:'5 Metas',desc:'Tienes 5 metas activas',unlocked:goals.length>=5},
+        {icon:'👑',name:'Maestro',desc:'Completaste 3 metas',unlocked:goals.filter(g=>g.saved>=g.amount).length>=3},
+    ];
+    document.getElementById('achievementsList').innerHTML = achs.map(a => `
+        <div class="achievement-card ${a.unlocked?'':'locked'}">
+          ${a.unlocked?'<div class="achievement-badge">✓ Desbloqueado</div>':''}
+          <span class="achievement-icon">${a.icon}</span>
+          <div class="achievement-name">${a.name}</div>
+          <div class="achievement-desc">${a.desc}</div>
+        </div>`).join('');
+}
+
+// ============================
+// TABS
+// ============================
+function switchTab(tab, el) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('goalsView').style.display = tab==='goals'?'block':'none';
+    document.getElementById('historyView').style.display = tab==='history'?'block':'none';
+    document.getElementById('achievementsView').style.display = tab==='achievements'?'block':'none';
+    renderAll();
+}
+
+function renderAll() {
+    if (currentTab==='goals') renderGoals();
+    else if (currentTab==='history') renderHistory();
+    else buildAchievements();
+}
+
+// ============================
+// EMOJI PICKER
+// ============================
+function setupEmojiPicker() {
+    document.getElementById('emojiPicker').innerHTML = EMOJIS.map(e =>
+        `<div class="emoji-opt ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</div>`
+    ).join('');
+}
+function selectEmoji(e) { selectedEmoji=e; setupEmojiPicker(); }
+
+// ============================
+// CALCULAR / GUARDAR META
+// ============================
+function calculateSavings() {
+    const name = document.getElementById('goalName').value.trim();
+    const amount = parseFloat(document.getElementById('goalAmount').value);
+    const deadline = document.getElementById('goalDate').value;
+    if (!name||!amount||!deadline) { showToast('⚠️ Completa todos los campos'); return; }
+    const days = Math.ceil((new Date(deadline)-new Date())/86400000);
+    if (days <= 0) { showToast('⚠️ Elige una fecha futura'); return; }
+    const weekly = Math.ceil(amount/Math.ceil(days/7));
+    const monthly = Math.ceil(amount/Math.ceil(days/30));
+    const daily = Math.ceil(amount/days);
+    calcPlan = { name, amount, deadline, emoji: selectedEmoji, weekly };
+    const r = document.getElementById('planResult');
+    r.className = 'plan-result visible';
+    r.innerHTML = `
+        <div style="font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;">📊 Plan de Ahorro</div>
+        <div class="plan-row"><span class="plan-key">🎯 Meta total</span><span class="plan-val">$${amount.toLocaleString()}</span></div>
+        <div class="plan-row"><span class="plan-key">📅 Días restantes</span><span class="plan-val">${days} días</span></div>
+        <div class="plan-row"><span class="plan-key">☀️ Diario</span><span class="plan-val">$${daily.toLocaleString()}</span></div>
+        <div class="plan-row"><span class="plan-key">📆 Semanal</span><span class="plan-val">$${weekly.toLocaleString()}</span></div>
+        <div class="plan-row"><span class="plan-key">🗓 Mensual</span><span class="plan-val">$${monthly.toLocaleString()}</span></div>`;
+    document.getElementById('calcBtn').style.display = 'none';
+    document.getElementById('saveBtn').style.display = 'block';
+}
+
+async function saveGoal() {
+    if (!calcPlan) return;
+    await db.addGoal({ name:calcPlan.name, emoji:calcPlan.emoji, amount:calcPlan.amount, deadline:calcPlan.deadline, weekly:calcPlan.weekly });
+    closeModal('newGoalModal');
+    resetGoalForm();
+    await loadData();
+    renderAll();
+    buildAchievements();
+    triggerConfetti();
+    showToast('🎉 ¡Meta creada exitosamente!');
+}
+
+function resetGoalForm() {
+    ['goalName','goalAmount','goalDate'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('planResult').className = 'plan-result';
+    document.getElementById('calcBtn').style.display = 'block';
+    document.getElementById('saveBtn').style.display = 'none';
+    calcPlan = null;
+}
+
+// ============================
+// ADD / WITHDRAW
+// ============================
+function openQuickAdd() {
+    const sel = document.getElementById('addGoalSelect');
+    sel.innerHTML = goals.map(g=>`<option value="${g.id}">${g.emoji} ${g.name}</option>`).join('');
+    openModal('addModal');
+}
+function openAddForGoal(id) {
+    openQuickAdd();
+    document.getElementById('addGoalSelect').value = id;
+}
+async function confirmAdd() {
+    const amount = parseFloat(document.getElementById('addAmount').value);
+    const goalId = parseInt(document.getElementById('addGoalSelect').value);
+    if (!amount||amount<=0) { showToast('⚠️ Ingresa una cantidad válida'); return; }
+    const g = await db.getGoal(goalId);
+    await db.updateGoal(goalId, { saved: g.saved+amount });
+    await db.addTransaction({ goalId, amount, type:'add' });
+    closeModal('addModal');
+    document.getElementById('addAmount').value = '';
+    await loadData(); renderAll();
+    const ug = await db.getGoal(goalId);
+    if (ug.saved >= ug.amount) { triggerConfetti(); showToast(`🎉 ¡Completaste: ${ug.name}!`); }
+    else showToast(`💰 +$${amount.toLocaleString()} depositado`);
+}
+
+function openQuickWithdraw() {
+    const sel = document.getElementById('withdrawGoalSelect');
+    sel.innerHTML = goals.map(g=>`<option value="${g.id}">${g.emoji} ${g.name} — $${g.saved.toLocaleString()}</option>`).join('');
+    openModal('withdrawModal');
+}
+function openWithdrawForGoal(id) {
+    openQuickWithdraw();
+    document.getElementById('withdrawGoalSelect').value = id;
+}
+async function confirmWithdraw() {
+    const amount = parseFloat(document.getElementById('withdrawAmount').value);
+    const goalId = parseInt(document.getElementById('withdrawGoalSelect').value);
+    if (!amount||amount<=0) { showToast('⚠️ Ingresa una cantidad válida'); return; }
+    const g = await db.getGoal(goalId);
+    if (amount > g.saved) { showToast('⚠️ No tienes suficiente ahorrado'); return; }
+    await db.updateGoal(goalId, { saved: g.saved-amount });
+    await db.addTransaction({ goalId, amount, type:'withdraw' });
+    closeModal('withdrawModal');
+    document.getElementById('withdrawAmount').value = '';
+    await loadData(); renderAll();
+    showToast(`💸 -$${amount.toLocaleString()} retirado`);
+}
+
+function openNewGoal() { openModal('newGoalModal'); setupEmojiPicker(); }
+
+// ============================
+// MODALES
+// ============================
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// Cerrar modal al tocar overlay
+document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target===o) closeModal(o.id); });
+});
+
+// ============================
+// TOAST
+// ============================
+let toastTimer;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ============================
+// CONFETTI
+// ============================
+function triggerConfetti() {
+    const colors = ['#FFD700','#FF4500','#00FF88','#00D4FF','#FF006E','#FFA500'];
+    for (let i = 0; i < 60; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        p.style.cssText = `
+            left:${Math.random()*100}%;
+            background:${colors[Math.floor(Math.random()*colors.length)]};
+            width:${6+Math.random()*10}px;
+            height:${6+Math.random()*10}px;
+            border-radius:${Math.random()>0.5?'50%':'2px'};
+            --dur:${2+Math.random()*2}s;
+            --delay:${Math.random()*0.8}s;
+        `;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 4000);
+    }
+}
+
+// ============================
+// START
+// ============================
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
